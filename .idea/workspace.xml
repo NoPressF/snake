@@ -7,15 +7,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ea37899f-f75d-4a32-81f7-5cfb21d3f152" name="Changes" comment="Initial commit">
-      <change afterPath="$PROJECT_DIR$/src/game.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/map.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/player.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils.rs" afterDir="false" />
+    <list default="true" id="ea37899f-f75d-4a32-81f7-5cfb21d3f152" name="Changes" comment="Added simple movement (WIP)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/map.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/map.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/player.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +31,9 @@
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="rMmDPU4Y" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 2
@@ -115,7 +114,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739390303666</updated>
-      <workItem from="1739390305191" duration="9695000" />
+      <workItem from="1739390305191" duration="10586000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -125,7 +124,31 @@
       <option name="project" value="LOCAL" />
       <updated>1739390456622</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added simple movement (WIP)">
+      <option name="closed" value="true" />
+      <created>1739400174104</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739400174105</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added simple movement (WIP)">
+      <option name="closed" value="true" />
+      <created>1739400247013</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739400247013</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added simple movement (WIP)">
+      <option name="closed" value="true" />
+      <created>1739400262722</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1739400262722</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,6 +156,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+    <MESSAGE value="Added simple movement (WIP)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added simple movement (WIP)" />
   </component>
 </project>

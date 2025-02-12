@@ -1,5 +1,5 @@
 use crate::player::Player;
-use crossterm::{cursor, execute, terminal, ExecutableCommand};
+use crossterm::{cursor, execute, terminal};
 use std::io::{stdout, Write};
 
 pub(crate) struct Map {}
@@ -8,7 +8,7 @@ impl Map {
     pub fn draw(player: &mut Player) {
         let mut stdout = stdout();
 
-        let total_lines = Self::HEIGHT as u16 + 2;
+        let total_lines = Self::HEIGHT as u16 - 3;
 
         execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
         execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();

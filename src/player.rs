@@ -22,10 +22,12 @@ impl Player {
 
     pub fn move_to(&mut self, direction: MoveDirection) {
         match direction {
-            MoveDirection::LEFT => self.pos.x = (self.pos.x - 1).max(0),
-            MoveDirection::RIGHT => self.pos.x = (self.pos.x + 1).min(Map::WIDTH),
-            MoveDirection::FORWARD => self.pos.y = (self.pos.y - 1).max(0),
-            MoveDirection::BACKWARD => self.pos.y = (self.pos.y + 1).min(Map::HEIGHT),
+            MoveDirection::LEFT => self.pos.x = (self.pos.x.saturating_sub(1)).clamp(0, Map::WIDTH),
+            MoveDirection::FORWARD => {
+                self.pos.y = (self.pos.y.saturating_sub(1)).clamp(0, Map::HEIGHT)
+            }
+            MoveDirection::RIGHT => self.pos.x = (self.pos.x + 1).clamp(0, Map::WIDTH),
+            MoveDirection::BACKWARD => self.pos.y = (self.pos.y + 1).clamp(0, Map::HEIGHT),
         }
     }
 
