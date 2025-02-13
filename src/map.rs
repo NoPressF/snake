@@ -8,12 +8,12 @@ impl Map {
     pub fn draw(player: &mut Player) {
         let mut stdout = stdout();
 
-        let total_lines = Self::HEIGHT as u16 - 3;
+        let total_lines = Self::HEIGHT as u16 + 4;
 
         execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
         execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
 
-        let horizontal_line = " ——".repeat(Self::WIDTH as usize);
+        let horizontal_line = " ——".repeat(Self::WIDTH as usize + 1);
         println!("{}", horizontal_line);
 
         for y in 0..=Self::HEIGHT {
