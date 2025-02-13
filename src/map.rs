@@ -21,7 +21,7 @@ impl Map {
         let total_lines = Self::SIZE.1 as u16 + 4;
         let mut player = self.player.lock().unwrap();
 
-        execute!(stdout, cursor::MoveUp(total_lines as u16)).unwrap();
+        execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
         execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
 
         if let Some(body) = player.body.as_mut() {
@@ -30,9 +30,9 @@ impl Map {
             let horizontal_line = "───".repeat(Self::SIZE.0 as usize + 1);
             println!("┌{}┐", horizontal_line);
 
-            for y in 0..=Self::SIZE.1 as u8 {
+            for y in 0..=Self::SIZE.1 {
                 print!("│");
-                for x in 0..=Self::SIZE.0 as u8 {
+                for x in 0..=Self::SIZE.0 {
                     if body.contains(
                         &(Vector2D {
                             x: x as i8,
