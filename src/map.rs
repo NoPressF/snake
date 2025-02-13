@@ -1,6 +1,7 @@
 use crate::player::Player;
 use crossterm::{cursor, execute, terminal};
 use std::io::{stdout, Write};
+use crate::utils::Vector2D;
 
 pub(crate) struct Map {}
 
@@ -13,13 +14,14 @@ impl Map {
         execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
         execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
 
+        println!("X: {} - Y: {} - BodyLen: {}", player.body.get(0).unwrap().x, player.body.get(0).unwrap().y, player.body.len());
         let horizontal_line = " ——".repeat(Self::WIDTH as usize + 1);
         println!("{}", horizontal_line);
 
         for y in 0..=Self::HEIGHT {
             print!("|");
             for x in 0..=Self::WIDTH {
-                if x as i8 == player.pos.x && y as i8 == player.pos.y {
+                if player.body.contains(&(Vector2D{x:x as i8, y:y as i8})) {
                     print!(" {} ", Player::CHAR);
                 } else {
                     print!("   ");
@@ -29,7 +31,6 @@ impl Map {
         }
 
         println!("{}", horizontal_line);
-        println!("X: {} - Y: {}", player.pos.x, player.pos.y);
 
         stdout.flush().unwrap();
     }

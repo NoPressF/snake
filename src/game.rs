@@ -7,5 +7,5 @@ impl Game {
         thread::sleep(Self::INTERVAL);
     }
 
-    const INTERVAL: Duration = Duration::from_millis(50);
+    const INTERVAL: Duration = Duration::from_millis(150);
 }
