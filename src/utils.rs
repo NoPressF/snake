@@ -1,4 +1,4 @@
 pub struct Vector2D {
-    pub x: u8,
-    pub y: u8,
+    pub x: i8,
+    pub y: i8,
 }

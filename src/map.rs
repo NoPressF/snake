@@ -19,7 +19,7 @@ impl Map {
         for y in 0..=Self::HEIGHT {
             print!("|");
             for x in 0..=Self::WIDTH {
-                if x == player.pos.x && y == player.pos.y {
+                if x as i8 == player.pos.x && y as i8 == player.pos.y {
                     print!(" {} ", Player::CHAR);
                 } else {
                     print!("   ");
@@ -34,6 +34,6 @@ impl Map {
         stdout.flush().unwrap();
     }
 
-    pub const WIDTH: u8 = 5;
-    pub const HEIGHT: u8 = 5;
+    pub const WIDTH: u8 = 25;
+    pub const HEIGHT: u8 = 25;
 }
