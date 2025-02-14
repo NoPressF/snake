@@ -66,14 +66,14 @@ impl Player {
         let mut new_head = self.get_new_head().unwrap();
 
         if new_head.x < 0 {
-            new_head.x = Map::SIZE.0 as i8 - 1;
+            new_head.x = Map::SIZE.0 as i8 + 1;
         } else if new_head.x >= Map::SIZE.0 as i8 + 1 {
             new_head.x = 0;
         }
 
         if new_head.y < 0 {
             new_head.y = Map::SIZE.1 as i8 - 1;
-        } else if new_head.y >= Map::SIZE.1 as i8 {
+        } else if new_head.y >= Map::SIZE.1 as i8 + 1 {
             new_head.y = 0;
         }
 
