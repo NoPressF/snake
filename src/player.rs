@@ -67,7 +67,7 @@ impl Player {
 
         if new_head.x < 0 {
             new_head.x = Map::SIZE.0 as i8 - 1;
-        } else if new_head.x >= Map::SIZE.0 as i8 {
+        } else if new_head.x >= Map::SIZE.0 as i8 + 1 {
             new_head.x = 0;
         }
 
