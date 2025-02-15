@@ -1,6 +1,7 @@
 mod game;
 mod map;
 mod player;
+mod storage;
 mod utils;
 
 use crate::map::MAP_INSTANCE;

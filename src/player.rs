@@ -1,7 +1,9 @@
-use std::collections::BTreeSet;
 use crate::game::{Game, GAME_INSTANCE};
 use crate::map::Map;
+use crate::storage::Storage;
 use crate::utils;
+use crate::utils::Utils;
+use crossterm::style::Color;
 use lazy_static::lazy_static;
 use rand::Rng;
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -10,8 +12,8 @@ use utils::Vector2D;
 pub struct Player {
     pub body: Option<Vec<Vector2D<i16>>>,
     pub direction: Option<(i8, i8)>,
-    pub score_history: Option<BTreeSet<i16>>,
-    pub score: i16
+    pub score: u16,
+    pub highest_score: Option<u16>,
 }
 
 impl Player {
@@ -19,21 +21,29 @@ impl Player {
         let mut player = Player {
             body: None,
             direction: None,
-            score_history: None,
-            score: 0
+            score: 0,
+            highest_score: Some(0),
         };
 
         player.body = player.get_center_body_pos();
         player.direction = player.get_random_direction();
-        player.score_history = Option::from(BTreeSet::new());
+
+        match Storage::load_highest_score() {
+            Ok(Some(highest_score)) => {
+                player.highest_score = Some(highest_score);
+            }
+            Ok(None) => {
+                let _ = Storage::save_highest_score(&player);
+            }
+            Err(_) => {}
+        }
 
         player
     }
 
     pub fn get_random_direction(&self) -> Option<(i8, i8)> {
-        let random_directions: Vec<(i8, i8)> = vec![(0, 1), (-1, 0), (1, 0), (0, -1), (0, 1)];
-        let random_direction_index = rand::rng().random_range(0..random_directions.len());
-        Option::from(random_directions[random_direction_index])
+        let random_direction_index = rand::rng().random_range(0..Self::RANDOM_DIRECTIONS.len());
+        Option::from(Self::RANDOM_DIRECTIONS[random_direction_index])
     }
 
     pub fn set_direction(&mut self, direction: Option<(i8, i8)>) {
@@ -111,6 +121,11 @@ impl Player {
         game_instance.generate_food();
         self.grow();
         self.score += 1;
+
+        if Some(self.score) > self.highest_score {
+            self.highest_score = Some(self.score);
+            Storage::save_highest_score(self).unwrap();
+        }
     }
 
     pub fn grow(&mut self) {
@@ -130,7 +145,25 @@ impl Player {
         self.direction = new_direction;
     }
 
+    pub fn get_body_colors(&mut self) -> Option<Vec<Color>> {
+        if let Some(body) = self.body.as_mut() {
+            let mut body_colors = Vec::new();
+            for index in 0..body.len() {
+                let color = Utils::lerp_rgb_color(
+                    index as f32 / body.len() as f32,
+                    Game::PLAYER_HEAD_COLOR,
+                    Game::PLAYER_TAIL_COLOR,
+                );
+                body_colors.push(color);
+            }
+
+            return Some(body_colors);
+        }
+        None
+    }
+
     const SIZE: u16 = 2;
+    const RANDOM_DIRECTIONS: [(i8, i8); 5] = [(0, 1), (-1, 0), (1, 0), (0, -1), (0, 1)];
 }
 
 lazy_static! {
