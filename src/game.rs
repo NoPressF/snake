@@ -2,6 +2,7 @@ use crate::snake::Snake;
 use crate::storage::Storage;
 use crate::utils::Vector2D;
 use crossterm::style::{Color, Stylize};
+use crossterm::{cursor, execute, terminal};
 use rand::Rng;
 use std::io::{stdout, Write};
 use std::time::Duration;
@@ -36,18 +37,31 @@ impl Game {
         self.food_pos = None
     }
 
-    pub fn generate_food(&mut self) -> Option<Vector2D<i16>> {
-        self.food_index = rand::rng().random_range(0..=Self::FOODS.len() - 1) as u8;
-
+    pub fn get_random_food_pos(&self) -> (u16, u16) {
         let x = rand::rng().random_range(0..Self::MAP_SIZE.0);
         let y = rand::rng().random_range(0..Self::MAP_SIZE.1);
 
-        self.food_pos = Some(Vector2D {
-            x: x as i16,
-            y: y as i16,
-        });
+        (x, y)
+    }
 
-        self.food_pos
+    pub fn generate_food(&mut self) {
+        let mut pos = self.get_random_food_pos();
+
+        self.food_index = rand::rng().random_range(0..=Self::FOODS.len() - 1) as u8;
+
+        if let Some(body) = &self.snake.body {
+            while body.contains(&Vector2D {
+                x: pos.0 as i16,
+                y: pos.1 as i16,
+            }) {
+                pos = self.get_random_food_pos();
+            }
+        }
+
+        self.food_pos = Some(Vector2D {
+            x: pos.0 as i16,
+            y: pos.1 as i16,
+        });
     }
 
     pub fn restart(&mut self) {
@@ -122,6 +136,11 @@ impl Game {
         let snake = &mut self.snake;
         let body = snake.body.as_ref().map(|b| b.to_vec());
         let body_colors = snake.get_body_colors();
+
+        let total_lines = Self::MAP_SIZE.1 + 4;
+
+        execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
+        execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
 
         if let Some(body) = body {
             if let Some(body_colors) = body_colors {

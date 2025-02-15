@@ -128,6 +128,6 @@ impl Snake {
         None
     }
 
-    const SIZE: u16 = 2;
+    const SIZE: u16 = 100;
     const RANDOM_DIRECTIONS: [(i8, i8); 5] = [(0, 1), (-1, 0), (1, 0), (0, -1), (0, 1)];
 }
