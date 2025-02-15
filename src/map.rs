@@ -1,25 +1,24 @@
 use crate::game::{Game, GAME_INSTANCE};
-use crate::player::Player;
+use crate::player::PLAYER_INSTANCE;
 use crate::utils::Vector2D;
 use crossterm::style::Stylize;
 use crossterm::{cursor, execute, terminal};
+use lazy_static::lazy_static;
 use std::io::{stdout, Write};
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 
-pub(crate) struct Map {
-    player: Arc<Mutex<Player>>,
-}
+pub struct Map {}
 
 impl Map {
-    pub fn new(player: Arc<Mutex<Player>>) -> Map {
-        Map { player }
+    pub fn new() -> Map {
+        Map {}
     }
 
     pub fn draw(&mut self) {
         let mut stdout = stdout();
 
         let total_lines = Self::SIZE.1 as u16 + 4;
-        let mut player = self.player.lock().unwrap();
+        let mut player = PLAYER_INSTANCE.lock().unwrap();
 
         execute!(stdout, cursor::MoveUp(total_lines)).unwrap();
         execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
@@ -61,4 +60,8 @@ impl Map {
     }
 
     pub const SIZE: (u8, u8) = (25, 25);
+}
+
+lazy_static! {
+    pub static ref MAP_INSTANCE: Mutex<Map> = Mutex::new(Map::new());
 }

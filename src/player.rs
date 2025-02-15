@@ -1,7 +1,9 @@
 use crate::game::GAME_INSTANCE;
 use crate::map::Map;
 use crate::utils;
+use lazy_static::lazy_static;
 use rand::Rng;
+use std::sync::{Arc, Mutex};
 use utils::Vector2D;
 
 pub struct Player {
@@ -118,4 +120,8 @@ impl Player {
     }
 
     const SIZE: u8 = 2;
+}
+
+lazy_static! {
+    pub static ref PLAYER_INSTANCE: Arc<Mutex<Player>> = Arc::new(Mutex::new(Player::new()));
 }
