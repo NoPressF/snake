@@ -13,7 +13,7 @@ pub struct Player {
     pub body: Option<Vec<Vector2D<i16>>>,
     pub direction: Option<(i8, i8)>,
     pub score: u16,
-    pub highest_score: Option<u16>,
+    pub highest_score: u16,
 }
 
 impl Player {
@@ -22,18 +22,19 @@ impl Player {
             body: None,
             direction: None,
             score: 0,
-            highest_score: Some(0),
+            highest_score: 0,
         };
 
         player.body = player.get_center_body_pos();
         player.direction = player.get_random_direction();
 
         match Storage::load_highest_score() {
-            Ok(Some(highest_score)) => {
-                player.highest_score = Some(highest_score);
-            }
-            Ok(None) => {
-                let _ = Storage::save_highest_score(&player);
+            Ok(highest_score) => {
+                if highest_score == 0 {
+                    let _ = Storage::save_highest_score(&player);
+                } else {
+                    player.highest_score = highest_score;
+                }
             }
             Err(_) => {}
         }
@@ -122,8 +123,8 @@ impl Player {
         self.grow();
         self.score += 1;
 
-        if Some(self.score) > self.highest_score {
-            self.highest_score = Some(self.score);
+        if self.score > self.highest_score {
+            self.highest_score = self.score;
             Storage::save_highest_score(self).unwrap();
         }
     }

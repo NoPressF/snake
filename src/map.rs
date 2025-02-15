@@ -28,10 +28,8 @@ impl Map {
                 let game_instance = GAME_INSTANCE.lock().unwrap();
                 let mut score = format!("Score: {}", player.score);
 
-                if let Some(highest) = player.highest_score {
-                    if highest > 0 {
-                        score.push_str(&format!(" - Highest Score: {}", highest));
-                    }
+                if player.highest_score > 0 {
+                    score.push_str(&format!(" - Highest Score: {}", player.highest_score));
                 }
 
                 println!("{}", score);

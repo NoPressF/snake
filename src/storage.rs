@@ -13,25 +13,18 @@ struct PlayerData {
 pub(crate) struct Storage;
 impl Storage {
     pub fn save_highest_score(player: &Player) -> io::Result<()> {
-        if let Some(highest) = player.highest_score {
-            let player_data = PlayerData {
-                highest_score: highest,
-            };
+        let player_data = PlayerData {
+            highest_score: player.highest_score,
+        };
 
-            let json = serde_json::to_string_pretty(&player_data)?;
-            let mut file = File::create("player.json")?;
-            file.write_all(json.as_bytes())?;
+        let json = serde_json::to_string_pretty(&player_data)?;
+        let mut file = File::create("player.json")?;
+        file.write_all(json.as_bytes())?;
 
-            Ok(())
-        } else {
-            Err(io::Error::new(
-                io::ErrorKind::NotFound,
-                "No highest score found",
-            ))
-        }
+        Ok(())
     }
 
-    pub fn load_highest_score() -> io::Result<Option<u16>> {
+    pub fn load_highest_score() -> io::Result<u16> {
         let file = File::open("player.json");
 
         match file {
@@ -40,9 +33,9 @@ impl Storage {
                 f.read_to_string(&mut contents)?;
 
                 let player_data: PlayerData = serde_json::from_str(&contents)?;
-                Ok(Some(player_data.highest_score))
+                Ok(player_data.highest_score)
             }
-            Err(_) => Ok(None),
+            Err(_) => Ok(0),
         }
     }
 }
