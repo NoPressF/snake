@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, PartialEq)]
-pub struct Vector2D {
-    pub x: i8,
-    pub y: i8,
+pub struct Vector2D<T> {
+    pub x: T,
+    pub y: T,
 }

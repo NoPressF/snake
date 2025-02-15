@@ -1,14 +1,17 @@
-use crate::game::GAME_INSTANCE;
+use std::collections::BTreeSet;
+use crate::game::{Game, GAME_INSTANCE};
 use crate::map::Map;
 use crate::utils;
 use lazy_static::lazy_static;
 use rand::Rng;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, MutexGuard};
 use utils::Vector2D;
 
 pub struct Player {
-    pub body: Option<Vec<Vector2D>>,
+    pub body: Option<Vec<Vector2D<i16>>>,
     pub direction: Option<(i8, i8)>,
+    pub score_history: Option<BTreeSet<i16>>,
+    pub score: i16
 }
 
 impl Player {
@@ -16,10 +19,13 @@ impl Player {
         let mut player = Player {
             body: None,
             direction: None,
+            score_history: None,
+            score: 0
         };
 
         player.body = player.get_center_body_pos();
         player.direction = player.get_random_direction();
+        player.score_history = Option::from(BTreeSet::new());
 
         player
     }
@@ -34,29 +40,29 @@ impl Player {
         self.direction = direction;
     }
 
-    pub fn get_center_body_pos(&self) -> Option<Vec<Vector2D>> {
-        let mut body = Vec::new();
+    pub fn get_center_body_pos(&self) -> Option<Vec<Vector2D<i16>>> {
+        let mut body: Vec<Vector2D<i16>> = Vec::new();
 
         for i in 0..Self::SIZE {
             body.push(Vector2D {
-                x: i as i8 + (Map::SIZE.0 / 2) as i8,
-                y: (Map::SIZE.1 / 2) as i8,
+                x: (i + (Map::SIZE.0 / 2)) as i16,
+                y: (Map::SIZE.1 / 2) as i16,
             });
         }
 
         Option::from(body)
     }
 
-    pub fn set_body_pos(&mut self, pos: Option<Vec<Vector2D>>) {
+    pub fn set_body_pos(&mut self, pos: Option<Vec<Vector2D<i16>>>) {
         self.body = pos;
     }
 
-    fn get_new_head(&self) -> Option<Vector2D> {
+    fn get_new_head(&self) -> Option<Vector2D<i16>> {
         if let Some(body) = &self.body {
             if let Some(head) = body.first() {
                 return Some(Vector2D {
-                    x: head.x + self.direction.unwrap().0,
-                    y: head.y + self.direction.unwrap().1,
+                    x: head.x + self.direction.unwrap().0 as i16,
+                    y: head.y + self.direction.unwrap().1 as i16,
                 });
             }
         }
@@ -68,14 +74,14 @@ impl Player {
         let mut new_head = self.get_new_head().unwrap();
 
         if new_head.x < 0 {
-            new_head.x = Map::SIZE.0 as i8 + 1;
-        } else if new_head.x >= Map::SIZE.0 as i8 + 1 {
+            new_head.x = Map::SIZE.0 as i16 + 1;
+        } else if new_head.x >= Map::SIZE.0 as i16 + 1 {
             new_head.x = 0;
         }
 
         if new_head.y < 0 {
-            new_head.y = Map::SIZE.1 as i8 - 1;
-        } else if new_head.y >= Map::SIZE.1 as i8 + 1 {
+            new_head.y = Map::SIZE.1 as i16 - 1;
+        } else if new_head.y >= Map::SIZE.1 as i16 + 1 {
             new_head.y = 0;
         }
 
@@ -86,13 +92,11 @@ impl Player {
             }
         }
 
-        let mut game_instance = GAME_INSTANCE.lock().unwrap();
+        let game_instance = GAME_INSTANCE.lock().unwrap();
 
         if let Some(food_pos) = game_instance.get_food_pos() {
             if new_head == food_pos {
-                game_instance.remove_food();
-                game_instance.generate_food();
-                self.grow();
+                self.pickup_food(game_instance);
             }
         }
 
@@ -100,6 +104,13 @@ impl Player {
             body.insert(0, new_head);
             body.pop();
         }
+    }
+
+    pub fn pickup_food(&mut self, mut game_instance: MutexGuard<Game>) {
+        game_instance.remove_food();
+        game_instance.generate_food();
+        self.grow();
+        self.score += 1;
     }
 
     pub fn grow(&mut self) {
@@ -119,7 +130,7 @@ impl Player {
         self.direction = new_direction;
     }
 
-    const SIZE: u8 = 2;
+    const SIZE: u16 = 2;
 }
 
 lazy_static! {

@@ -7,7 +7,7 @@ use std::sync::Mutex;
 use std::time::Duration;
 
 pub struct Game {
-    food_pos: Option<Vector2D>,
+    food_pos: Option<Vector2D<i16>>,
 }
 
 impl Game {
@@ -17,7 +17,7 @@ impl Game {
         game
     }
 
-    pub fn get_food_pos(&self) -> Option<Vector2D> {
+    pub fn get_food_pos(&self) -> Option<Vector2D<i16>> {
         self.food_pos
     }
 
@@ -25,13 +25,13 @@ impl Game {
         self.food_pos = None
     }
 
-    pub fn generate_food(&mut self) -> Option<Vector2D> {
+    pub fn generate_food(&mut self) -> Option<Vector2D<i16>> {
         let x = rand::rng().random_range(0..Map::SIZE.0);
         let y = rand::rng().random_range(0..Map::SIZE.1);
 
         self.food_pos = Some(Vector2D {
-            x: x as i8,
-            y: y as i8,
+            x: x as i16,
+            y: y as i16,
         });
 
         self.food_pos
@@ -43,6 +43,8 @@ impl Game {
         player.body.as_mut().unwrap().clear();
         player.set_body_pos(player.get_center_body_pos());
         player.set_direction(player.get_random_direction());
+        player.score_history.as_mut().unwrap().insert(player.score);
+        player.score = 0;
     }
 
     pub const INTERVAL: Duration = Duration::from_millis(200);
