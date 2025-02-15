@@ -41,7 +41,7 @@ impl Snake {
 
     pub fn get_random_direction(&self) -> Option<(i8, i8)> {
         let random_direction_index = rand::rng().random_range(0..Self::RANDOM_DIRECTIONS.len());
-        Option::from(Self::RANDOM_DIRECTIONS[random_direction_index])
+        Some(Self::RANDOM_DIRECTIONS[random_direction_index])
     }
 
     pub fn set_direction(&mut self, direction: Option<(i8, i8)>) {
@@ -58,7 +58,7 @@ impl Snake {
             });
         }
 
-        Option::from(body)
+        Some(body)
     }
 
     pub fn set_body_pos(&mut self, pos: Option<Vec<Vector2D<i16>>>) {
@@ -76,22 +76,6 @@ impl Snake {
         }
 
         None
-    }
-
-    pub fn move_forward(&mut self) {
-        let mut new_head = self.get_new_head().unwrap();
-
-        if new_head.x < 0 {
-            new_head.x = Game::MAP_SIZE.0 as i16 + 1;
-        } else if new_head.x >= Game::MAP_SIZE.0 as i16 + 1 {
-            new_head.x = 0;
-        }
-
-        if new_head.y < 0 {
-            new_head.y = Game::MAP_SIZE.1 as i16 - 1;
-        } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
-            new_head.y = 0;
-        }
     }
 
     pub fn grow(&mut self) {
@@ -128,6 +112,6 @@ impl Snake {
         None
     }
 
-    const SIZE: u16 = 100;
+    const SIZE: u16 = 2;
     const RANDOM_DIRECTIONS: [(i8, i8); 5] = [(0, 1), (-1, 0), (1, 0), (0, -1), (0, 1)];
 }

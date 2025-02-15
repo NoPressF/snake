@@ -9,6 +9,7 @@ use std::time::Duration;
 
 pub struct Game {
     snake: Snake,
+    wall_collision: bool,
     food_pos: Option<Vector2D<i16>>,
     food_index: u8,
 }
@@ -17,6 +18,7 @@ impl Game {
     pub fn new() -> Game {
         let mut game = Game {
             snake: Snake::new(),
+            wall_collision: false,
             food_pos: None,
             food_index: 0,
         };
@@ -64,20 +66,6 @@ impl Game {
         });
     }
 
-    pub fn restart(&mut self) {
-        let snake = &mut self.snake;
-
-        if let Some(body) = &mut snake.body {
-            body.clear();
-        }
-        snake.set_body_pos(snake.get_center_body_pos());
-        snake.set_direction(snake.get_random_direction());
-        snake.score = 0;
-
-        self.remove_food();
-        self.generate_food();
-    }
-
     pub fn get_food_char(&self) -> char {
         Self::FOODS[self.food_index as usize]
     }
@@ -97,11 +85,38 @@ impl Game {
         self.generate_food();
     }
 
+    pub fn get_wall_collision(&self) -> bool {
+        self.wall_collision
+    }
+
+    pub fn toggle_wall_collision(&mut self, wall_collision: bool) {
+        self.wall_collision = wall_collision;
+    }
+
+    pub fn restart(&mut self) {
+        let snake = &mut self.snake;
+
+        if let Some(body) = &mut snake.body {
+            body.clear();
+        }
+        snake.set_body_pos(snake.get_center_body_pos());
+        snake.set_direction(snake.get_random_direction());
+        snake.score = 0;
+
+        self.remove_food();
+        self.generate_food();
+    }
+
     pub fn update(&mut self) {
+
+        let result = self.move_snake_forward();
+
+        if !result {
+            return;
+        }
+
         let food_pos = self.get_food_pos();
         let new_head = self.snake.get_new_head();
-
-        self.snake.move_forward();
 
         if let Some(new_head) = new_head {
             let collides_with_body = if let Some(body) = &self.snake.body {
@@ -126,6 +141,43 @@ impl Game {
                 body.pop();
             }
         }
+    }
+
+    pub fn move_snake_forward(&mut self) -> bool {
+        let mut new_head = self.snake.get_new_head().unwrap();
+
+        if new_head.x < 0 {
+            if !self.wall_collision {
+                new_head.x = Game::MAP_SIZE.0 as i16 + 1;
+            } else {
+                self.restart();
+                return false;
+            }
+        } else if new_head.x >= Game::MAP_SIZE.0 as i16 + 1 {
+            if !self.wall_collision {
+                new_head.x = 0;
+            } else {
+                self.restart();
+                return false;
+            }
+        }
+        if new_head.y < 0 {
+            if !self.wall_collision {
+                new_head.y = Game::MAP_SIZE.1 as i16 - 1;
+            } else {
+                self.restart();
+                return false;
+            }
+        } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
+            if !self.wall_collision {
+                new_head.y = 0;
+            } else {
+                self.restart();
+                return false;
+            }
+        }
+
+        true
     }
 
     pub fn draw(&mut self) {
@@ -190,7 +242,42 @@ impl Game {
         stdout.flush().unwrap();
     }
 
+    pub fn draw_main_menu(&self) {
+        let mut stdout = stdout();
+
+        execute!(stdout, cursor::MoveUp(12)).unwrap();
+        execute!(stdout, terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
+
+        println!(
+            "{}",
+            r"
+   _____             _
+  / ____|           | |
+ | (___  _ __   __ _| | _____
+  \___ \| '_ \ / _` | |/ / _ \
+  ____) | | | | (_| |   <  __/
+ |_____/|_| |_|\__,_|_|\_\___|
+
+
+"
+            .with(Color::Rgb {
+                r: 50,
+                g: 205,
+                b: 50
+            })
+        );
+
+        println!("[1] - Play");
+        println!(
+            "[2] - Wall collision: [{}]",
+            if self.wall_collision { 'X' } else { '-' }
+        );
+
+        stdout.flush().unwrap();
+    }
+
     pub const UPDATE_INTERVAL: Duration = Duration::from_millis(200);
+    pub const UPDATE_MAIN_MENU_INTERVAL: Duration = Duration::from_millis(200);
     pub const FOODS: [char; 2] = ['🍎', '🍏'];
     pub const SNAKE: char = '■';
     pub const SNAKE_HEAD_COLOR: Color = Color::Rgb { r: 0, g: 255, b: 0 };
