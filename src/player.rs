@@ -150,7 +150,7 @@ impl Player {
             let mut body_colors = Vec::new();
             for index in 0..body.len() {
                 let color = Utils::lerp_rgb_color(
-                    index as f32 / body.len() as f32,
+                    index as f32 / (body.len() - 1) as f32,
                     Game::PLAYER_HEAD_COLOR,
                     Game::PLAYER_TAIL_COLOR,
                 );
