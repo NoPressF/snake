@@ -107,13 +107,41 @@ impl Game {
         self.generate_food();
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self) -> bool {
         let food_pos = self.get_food_pos();
-        let new_head = self.snake.get_new_head();
+        let mut new_head = self.snake.get_new_head();
 
-        self.move_snake_forward();
+        if let Some(new_head) = &mut new_head {
+            if new_head.x < 0 {
+                if !self.wall_collision {
+                    new_head.x = Game::MAP_SIZE.0 as i16 + 1;
+                } else {
+                    self.restart();
+                    return false;
+                }
+            } else if new_head.x >= Game::MAP_SIZE.0 as i16 + 1 {
+                if !self.wall_collision {
+                    new_head.x = 0;
+                } else {
+                    self.restart();
+                    return false;
+                }
+            } else if new_head.y < 0 {
+                if !self.wall_collision {
+                    new_head.y = Game::MAP_SIZE.1 as i16 - 1;
+                } else {
+                    self.restart();
+                    return false;
+                }
+            } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
+                if !self.wall_collision {
+                    new_head.y = 0;
+                } else {
+                    self.restart();
+                    return false;
+                }
+            }
 
-        if let Some(new_head) = new_head {
             let collides_with_body = if let Some(body) = &self.snake.body {
                 body.contains(&new_head)
             } else {
@@ -122,36 +150,22 @@ impl Game {
 
             if collides_with_body {
                 self.restart();
-                return;
+                return false;
             }
 
             if let Some(food_pos) = food_pos {
-                if new_head == food_pos {
+                if *new_head == food_pos {
                     self.pickup_food();
                 }
             }
 
             if let Some(body) = &mut self.snake.body {
-                body.insert(0, new_head);
+                body.insert(0, *new_head);
                 body.pop();
             }
         }
-    }
 
-    pub fn move_snake_forward(&mut self) {
-        let mut new_head = self.snake.get_new_head().unwrap();
-
-        if new_head.x < 0 {
-            new_head.x = Game::MAP_SIZE.0 as i16 + 1;
-        } else if new_head.x >= Game::MAP_SIZE.0 as i16 + 1 {
-            new_head.x = 0;
-        }
-
-        if new_head.y < 0 {
-            new_head.y = Game::MAP_SIZE.1 as i16 - 1;
-        } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
-            new_head.y = 0;
-        }
+        true
     }
 
     pub fn draw(&mut self) {

@@ -16,30 +16,30 @@ fn main() {
     let device_state = DeviceState::new();
     let mut game = Game::new();
 
-    // let mut last_update_main_menu = Instant::now();
-    //
-    // 'main: loop {
-    //     let keys = device_state.get_keys();
-    //     for key in keys {
-    //         match key {
-    //             Keycode::Key1 => {
-    //                 break 'main;
-    //             }
-    //             Keycode::Key2 => {
-    //                 game.toggle_wall_collision(!game.get_wall_collision());
-    //             }
-    //             Keycode::Escape => {
-    //                 break 'main;
-    //             }
-    //             _ => {}
-    //         }
-    //     }
-    //
-    //     if last_update_main_menu.elapsed() >= Game::UPDATE_MAIN_MENU_INTERVAL {
-    //         game.draw_main_menu();
-    //         last_update_main_menu = Instant::now();
-    //     }
-    // }
+    let mut last_update_main_menu = Instant::now();
+
+    'main: loop {
+        let keys = device_state.get_keys();
+        for key in keys {
+            match key {
+                Keycode::Key1 => {
+                    break 'main;
+                }
+                Keycode::Key2 => {
+                    game.toggle_wall_collision(!game.get_wall_collision());
+                }
+                Keycode::Escape => {
+                    break 'main;
+                }
+                _ => {}
+            }
+        }
+
+        if last_update_main_menu.elapsed() >= Game::UPDATE_MAIN_MENU_INTERVAL {
+            game.draw_main_menu();
+            last_update_main_menu = Instant::now();
+        }
+    }
 
     let mut last_update_snake = Instant::now();
 
@@ -61,8 +61,10 @@ fn main() {
         }
 
         if last_update_snake.elapsed() >= Game::UPDATE_INTERVAL {
-            game.update();
-            game.draw();
+            if game.update() {
+                game.draw();
+            }
+
             last_update_snake = Instant::now();
         }
     }
