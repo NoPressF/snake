@@ -1,0 +1,46 @@
+name: Cargo build and Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build_and_test_windows:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        toolchain: [stable]
+        profile: [debug, release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup update ${{ matrix.toolchain }}
+          rustup default ${{ matrix.toolchain }}
+
+      - name: Test
+        shell: pwsh
+        run: |
+          if ("${{ matrix.profile }}" -eq "release") {
+            cargo test --verbose --release
+          } else {
+            cargo test --verbose
+          }
+
+      - name: Build
+        shell: pwsh
+        run: |
+          if ("${{ matrix.profile }}" -eq "release") {
+            cargo build --release
+          } else {
+            cargo build
+          }
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ matrix.toolchain }}-${{ matrix.profile }}
+          path: |
+            target/${{ matrix.profile }}/snake.exe
