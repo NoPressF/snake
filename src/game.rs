@@ -108,15 +108,10 @@ impl Game {
     }
 
     pub fn update(&mut self) {
-
-        let result = self.move_snake_forward();
-
-        if !result {
-            return;
-        }
-
         let food_pos = self.get_food_pos();
         let new_head = self.snake.get_new_head();
+
+        self.move_snake_forward();
 
         if let Some(new_head) = new_head {
             let collides_with_body = if let Some(body) = &self.snake.body {
@@ -143,41 +138,20 @@ impl Game {
         }
     }
 
-    pub fn move_snake_forward(&mut self) -> bool {
+    pub fn move_snake_forward(&mut self) {
         let mut new_head = self.snake.get_new_head().unwrap();
 
         if new_head.x < 0 {
-            if !self.wall_collision {
-                new_head.x = Game::MAP_SIZE.0 as i16 + 1;
-            } else {
-                self.restart();
-                return false;
-            }
+            new_head.x = Game::MAP_SIZE.0 as i16 + 1;
         } else if new_head.x >= Game::MAP_SIZE.0 as i16 + 1 {
-            if !self.wall_collision {
-                new_head.x = 0;
-            } else {
-                self.restart();
-                return false;
-            }
-        }
-        if new_head.y < 0 {
-            if !self.wall_collision {
-                new_head.y = Game::MAP_SIZE.1 as i16 - 1;
-            } else {
-                self.restart();
-                return false;
-            }
-        } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
-            if !self.wall_collision {
-                new_head.y = 0;
-            } else {
-                self.restart();
-                return false;
-            }
+            new_head.x = 0;
         }
 
-        true
+        if new_head.y < 0 {
+            new_head.y = Game::MAP_SIZE.1 as i16 - 1;
+        } else if new_head.y >= Game::MAP_SIZE.1 as i16 + 1 {
+            new_head.y = 0;
+        }
     }
 
     pub fn draw(&mut self) {
